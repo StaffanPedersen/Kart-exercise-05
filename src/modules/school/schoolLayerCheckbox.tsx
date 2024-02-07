@@ -11,7 +11,7 @@ import { MapContext } from "../map/mapContext";
 
 const schoolLayer = new VectorLayer({
   source: new VectorSource({
-    url: "/schools.json",
+    url: "./schools.json",
     format: new GeoJSON(),
   }),
   style: schoolStyle,
