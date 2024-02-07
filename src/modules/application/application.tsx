@@ -1,19 +1,56 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { MutableRefObject, useEffect, useRef, useState } from "react";
+import TileLayer from "ol/layer/Tile";
+import { OSM } from "ol/source";
 
-export const Application: React.FC = () => {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
+import "./application.css";
+import "ol/ol.css";
+import { KommuneLayerCheckbox } from "../kommune/kommuneLayerCheckbox";
+import { map, MapContext } from "../map/mapContext";
+import { Layer } from "ol/layer";
+import { KommuneAside } from "../kommune/kommuneAside";
+import { FylkeLayerCheckbox } from "../fylke/fylkeLayerCheckbox";
+import { FylkeAside } from "../fylke/fylkeAside";
+import { SchoolLayerCheckbox } from "../school/schoolLayerCheckbox";
+import { SchoolAside } from "../school/schoolAside";
 
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.innerHTML = `Count: ${count}`;
-    }
-  }, [count]);
+export function Application() {
+  function handleFocusUser(e: React.MouseEvent) {
+    e.preventDefault();
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const { latitude, longitude } = pos.coords;
+      map.getView().animate({
+        center: [longitude, latitude],
+        zoom: 12,
+      });
+    });
+  }
 
+  const [layers, setLayers] = useState<Layer[]>([
+    new TileLayer({ source: new OSM() }),
+  ]);
+  useEffect(() => map.setLayers(layers), [layers]);
+
+  const mapRef = useRef() as MutableRefObject<HTMLDivElement>;
+  useEffect(() => map.setTarget(mapRef.current), []);
   return (
-    <div>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
-      <div ref={ref} />
-    </div>
+    <MapContext.Provider value={{ map, layers, setLayers }}>
+      <header>
+        <h1>Kommune kart</h1>
+      </header>
+      <nav>
+        <a href={"#"} onClick={handleFocusUser}>
+          Focus on me
+        </a>
+        <KommuneLayerCheckbox />
+        <FylkeLayerCheckbox />
+        <SchoolLayerCheckbox />
+      </nav>
+      <main>
+        <div ref={mapRef}></div>
+        <FylkeAside />
+        <KommuneAside />
+        <SchoolAside />
+      </main>
+    </MapContext.Provider>
   );
-};
+}
