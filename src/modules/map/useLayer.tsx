@@ -9,6 +9,7 @@ export function useLayer(layer: Layer, checked: boolean) {
     if (checked) {
       setLayers((old) => [...old, layer]);
     }
+
     return () => {
       setLayers((old) => old.filter((l) => l !== layer));
     };

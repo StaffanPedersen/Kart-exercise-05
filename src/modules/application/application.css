@@ -27,7 +27,7 @@ main aside {
   overflow-y: auto;
 }
 
-main aside.visible {
+main aside {
   grid-template-columns: auto;
 }
 

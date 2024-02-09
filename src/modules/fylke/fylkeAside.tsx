@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { MapContext } from "../map/mapContext";
 import VectorSource from "ol/source/Vector";
 import VectorLayer from "ol/layer/Vector";
@@ -11,7 +11,6 @@ interface FylkeProperties {
   navn: Stedsnavn[];
 }
 
-// "navn": [{ "rekkefolge": "", "sprak": "nor", "navn": "Værøy" }]
 interface Stedsnavn {
   sprak: "nor" | "sme" | "sma" | "smj" | "fkv";
   navn: string;
@@ -25,24 +24,27 @@ function getStedsnavn(navn: Stedsnavn[]) {
   return navn.find((n) => n.sprak === "nor")?.navn;
 }
 
-function useFylkeFeatures() {
+function useFylkeFeatures(isVisible: boolean) {
   const { map, layers } = useContext(MapContext);
   const layer = layers.find(
-    (l) => l.getClassName() === "fylker",
+      (l) => l.getClassName() === "fylker",
   ) as FylkeVectorLayer;
   const [features, setFeatures] = useState<FylkeFeature[]>();
+  const [visibleFeatures, setVisibleFeatures] = useState<FylkeFeature[]>();
   const [viewExtent, setViewExtent] = useState(
-    map.getView().getViewStateAndExtent().extent,
-  );
-  const visibleFeatures = useMemo(
-    () =>
-      features?.filter((f) => f.getGeometry()?.intersectsExtent(viewExtent)),
-    [features, viewExtent],
+      map.getView().getViewStateAndExtent().extent,
   );
 
   function handleSourceChange() {
-    setFeatures(layer?.getSource()?.getFeatures());
+    const newFeatures = layer?.getSource()?.getFeatures();
+    setFeatures(newFeatures);
+    const newVisibleFeatures = newFeatures?.filter((f) => f.getGeometry()?.intersectsExtent(viewExtent));
+    setVisibleFeatures(newVisibleFeatures);
   }
+  useEffect(() => {
+    const newVisibleFeatures = features?.filter((f) => f.getGeometry()?.intersectsExtent(viewExtent));
+    setVisibleFeatures(newVisibleFeatures);
+  }, [viewExtent, features]);
 
   function handleViewChange() {
     setViewExtent(map.getView().getViewStateAndExtent().extent);
@@ -58,22 +60,33 @@ function useFylkeFeatures() {
     return () => map.getView().un("change", handleViewChange);
   }, [map]);
 
-  return { layer, features, visibleFeatures };
+  useEffect(() => {
+    if (layer) {
+      layer.setVisible(isVisible);
+    }
+    if (isVisible) {
+      handleSourceChange();
+    }
+  }, [isVisible, layer]);
+
+  return { fylkeLayer: layer, features, visibleFeatures };
 }
 
-export function FylkeAside() {
-  const { visibleFeatures } = useFylkeFeatures();
+export function FylkeAside({ isVisible }: { isVisible: boolean }) {
+  const { visibleFeatures } = useFylkeFeatures(isVisible);
 
   return (
-    <aside className={visibleFeatures?.length ? "visible" : "hidden"}>
-      <div>
-        <h2>Fylker</h2>
-        <ul>
-          {visibleFeatures?.map((k) => (
-            <li>{getStedsnavn(k.getProperties().navn)}</li>
-          ))}
-        </ul>
-      </div>
-    </aside>
+      <aside className={isVisible && visibleFeatures?.length ? "visible" : "hidden"}>
+        <div>
+          <h2>Fylker</h2>
+          <ul>
+            {visibleFeatures?.map((k: FylkeFeature) => (
+                <li key={k.getProperties().fylkesnummer}>
+                  {getStedsnavn(k.getProperties().navn)}
+                </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
   );
 }

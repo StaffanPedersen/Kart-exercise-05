@@ -1,20 +1,25 @@
-import React, { useState } from "react";
+// src/modules/kommune/kommuneLayerCheckbox.tsx
+import React from "react";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON } from "ol/format";
 import { useLayer } from "../map/useLayer";
 
 const kommuneLayer = new VectorLayer({
-  className: "kommuner",
-  source: new VectorSource({
-    url: "./kommuner.json",
-    format: new GeoJSON(),
-  }),
+    className: "kommuner",
+    source: new VectorSource({
+        url: "./kommuner.json",
+        format: new GeoJSON(),
+    }),
 });
 
-export function KommuneLayerCheckbox() {
-  const [checked, setChecked] = useState(false);
-  useLayer(kommuneLayer, checked);
+interface KommuneLayerCheckboxProps {
+    checked: boolean;
+    setChecked: (checked: boolean) => void;
+}
+
+export function KommuneLayerCheckbox({ checked, setChecked }: KommuneLayerCheckboxProps) {
+    useLayer(kommuneLayer, checked);
 
   return (
     <div>
