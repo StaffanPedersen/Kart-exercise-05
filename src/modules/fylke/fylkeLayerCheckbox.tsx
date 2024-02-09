@@ -21,11 +21,11 @@ const fylkeLayer = new VectorLayer({
         width: 3,
       }),
       fill:
-          fylkesnummer === "34"
-              ? new Fill({
-                color: [0x0, 0xff, 0x0, 0.2],
-              })
-              : undefined,
+        fylkesnummer === "34"
+          ? new Fill({
+              color: [0x0, 0xff, 0x0, 0.2],
+            })
+          : undefined,
       text: new Text({
         stroke: new Stroke({
           color: "blue",
@@ -41,19 +41,22 @@ interface FylkeLayerCheckboxProps {
   setChecked: (checked: boolean) => void;
 }
 
-export function FylkeLayerCheckbox({ checked, setChecked }: FylkeLayerCheckboxProps) {
+export function FylkeLayerCheckbox({
+  checked,
+  setChecked,
+}: FylkeLayerCheckboxProps) {
   useLayer(fylkeLayer, checked);
 
   return (
-      <div>
-        <label>
-          <input
-              type="checkbox"
-              checked={checked}
-              onChange={(e) => setChecked(e.target.checked)}
-          />
-          {checked ? "Hide" : "Show"} fylker
-        </label>
-      </div>
+    <div>
+      <label>
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => setChecked(e.target.checked)}
+        />
+        {checked ? "Hide" : "Show"} fylker
+      </label>
+    </div>
   );
 }

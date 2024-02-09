@@ -27,22 +27,26 @@ function getStedsnavn(navn: Stedsnavn[]) {
 function useFylkeFeatures(isVisible: boolean) {
   const { map, layers } = useContext(MapContext);
   const layer = layers.find(
-      (l) => l.getClassName() === "fylker",
+    (l) => l.getClassName() === "fylker",
   ) as FylkeVectorLayer;
   const [features, setFeatures] = useState<FylkeFeature[]>();
   const [visibleFeatures, setVisibleFeatures] = useState<FylkeFeature[]>();
   const [viewExtent, setViewExtent] = useState(
-      map.getView().getViewStateAndExtent().extent,
+    map.getView().getViewStateAndExtent().extent,
   );
 
   function handleSourceChange() {
     const newFeatures = layer?.getSource()?.getFeatures();
     setFeatures(newFeatures);
-    const newVisibleFeatures = newFeatures?.filter((f) => f.getGeometry()?.intersectsExtent(viewExtent));
+    const newVisibleFeatures = newFeatures?.filter((f) =>
+      f.getGeometry()?.intersectsExtent(viewExtent),
+    );
     setVisibleFeatures(newVisibleFeatures);
   }
   useEffect(() => {
-    const newVisibleFeatures = features?.filter((f) => f.getGeometry()?.intersectsExtent(viewExtent));
+    const newVisibleFeatures = features?.filter((f) =>
+      f.getGeometry()?.intersectsExtent(viewExtent),
+    );
     setVisibleFeatures(newVisibleFeatures);
   }, [viewExtent, features]);
 
@@ -76,17 +80,19 @@ export function FylkeAside({ isVisible }: { isVisible: boolean }) {
   const { visibleFeatures } = useFylkeFeatures(isVisible);
 
   return (
-      <aside className={isVisible && visibleFeatures?.length ? "visible" : "hidden"}>
-        <div>
-          <h2>Fylker</h2>
-          <ul>
-            {visibleFeatures?.map((k: FylkeFeature) => (
-                <li key={k.getProperties().fylkesnummer}>
-                  {getStedsnavn(k.getProperties().navn)}
-                </li>
-            ))}
-          </ul>
-        </div>
-      </aside>
+    <aside
+      className={isVisible && visibleFeatures?.length ? "visible" : "hidden"}
+    >
+      <div>
+        <h2>Fylker</h2>
+        <ul>
+          {visibleFeatures?.map((k: FylkeFeature) => (
+            <li key={k.getProperties().fylkesnummer}>
+              {getStedsnavn(k.getProperties().navn)}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
   );
 }

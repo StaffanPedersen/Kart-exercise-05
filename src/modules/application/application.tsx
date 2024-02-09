@@ -39,26 +39,32 @@ export function Application() {
   const [kommuneChecked, setKommuneChecked] = useState(false);
 
   return (
-      <MapContext.Provider value={{ map, layers, setLayers }}>
-        <header>
-          <h1>Kommune kart</h1>
-        </header>
-        <nav>
-          <a href={"#"} onClick={handleFocusUser}>
-            Focus on me
-          </a>
-          {/* Pass down the state and the setter as props */}
-          <KommuneLayerCheckbox checked={kommuneChecked} setChecked={() => setKommuneChecked(!kommuneChecked)} />
-          <FylkeLayerCheckbox checked={fylkeChecked} setChecked={() => setFylkeChecked(!fylkeChecked)} />
-          <SchoolLayerCheckbox />
-        </nav>
-        <main>
-          <div ref={mapRef}></div>
-          <SchoolAside/>
-          {/* Conditionally render FylkeAside and KommuneAside here */}
-          {fylkeChecked && <FylkeAside isVisible={fylkeChecked} />}
-          {kommuneChecked && <KommuneAside isVisible={kommuneChecked} />}
-        </main>
-      </MapContext.Provider>
+    <MapContext.Provider value={{ map, layers, setLayers }}>
+      <header>
+        <h1>Kommune kart</h1>
+      </header>
+      <nav>
+        <a href={"#"} onClick={handleFocusUser}>
+          Focus on me
+        </a>
+        {/* Pass down the state and the setter as props */}
+        <KommuneLayerCheckbox
+          checked={kommuneChecked}
+          setChecked={() => setKommuneChecked(!kommuneChecked)}
+        />
+        <FylkeLayerCheckbox
+          checked={fylkeChecked}
+          setChecked={() => setFylkeChecked(!fylkeChecked)}
+        />
+        <SchoolLayerCheckbox />
+      </nav>
+      <main>
+        <div ref={mapRef}></div>
+        <SchoolAside />
+        {/* Conditionally render FylkeAside and KommuneAside here */}
+        {fylkeChecked && <FylkeAside isVisible={fylkeChecked} />}
+        {kommuneChecked && <KommuneAside isVisible={kommuneChecked} />}
+      </main>
+    </MapContext.Provider>
   );
 }
