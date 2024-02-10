@@ -3,7 +3,7 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON } from "ol/format";
 import { Fill, Stroke, Style, Text } from "ol/style";
-import { FylkeFeature } from "./fylkeAside";
+import { FylkeFeature } from "../features/useFeatures";
 import { useLayer } from "../map/useLayer";
 
 const fylkeLayer = new VectorLayer({
