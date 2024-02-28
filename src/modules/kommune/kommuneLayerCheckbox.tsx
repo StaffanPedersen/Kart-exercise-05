@@ -1,3 +1,4 @@
+// src/modules/kommune/kommuneLayerCheckbox.tsx
 import React from "react";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
